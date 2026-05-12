@@ -1,76 +1,94 @@
 # precision-with-low-token-cost
 
-A Codex skill for reducing token usage without sacrificing precision, task completion, or engineering rigor.
+一个为 Codex 设计的节省 token 的 skill，在尽量减少上下文消耗的同时，保持结果精准、执行高效、工程过程可靠。
 
-## What It Does
+## 这个 Skill 解决什么问题
 
-This skill helps Codex stay concise without becoming shallow.
+在实际使用 Codex 时，常见的 token 浪费主要来自这些行为：
 
-It pushes the model to:
+- 一上来就扫描大量无关文件
+- 重复复述用户需求
+- 中间进度更新过长、信息密度低
+- 小任务也写很长的计划
+- 最终回答重复中间过程
 
-- read only the smallest relevant context
-- avoid repeating the user's request
-- keep progress updates short
-- prefer direct execution over long planning for small tasks
-- preserve verification and explicit uncertainty
+这个 skill 的目标不是“更短”，而是“更省且不降质量”。
 
-## Who It Is For
+它会约束 Codex：
 
-Use this skill if you want Codex to:
+- 只读取当前步骤最小必要的上下文
+- 少复述，少铺陈，少做预加载
+- 小任务优先直接执行，而不是先写长计划
+- 输出更关注结果、验证和风险
+- 在节省 token 的同时，保留必要验证和明确的不确定性说明
 
-- spend fewer tokens during coding tasks
-- avoid loading large amounts of context too early
-- reduce verbose intermediate updates
-- keep final answers compact and actionable
+## 适用场景
 
-## Skill File
+如果你希望 Codex 在下面这些任务里更克制地使用 token，这个 skill 会比较合适：
 
-The core skill lives in [SKILL.md](./SKILL.md).
+- 日常修 bug
+- 小到中等规模功能开发
+- 定向重构
+- 代码审查
+- 仓库排查与定位问题
 
-## Installation
+## 不适合的场景
 
-Copy this folder into your Codex skills directory:
+这个 skill 不适合被当成“为了省 token 就少做事”的理由。以下场景通常不应该只追求压缩输出：
+
+- 需求本身很模糊，需要先充分澄清
+- 架构设计和方案探索
+- 用户明确要求深入解释
+- 高风险改动，需要更完整的上下文和更详细的验证
+
+## 仓库结构
+
+- [SKILL.md](./SKILL.md)：核心 skill 定义
+- [USAGE.md](./USAGE.md)：使用方式与提示词示例
+
+## 安装方式
+
+将整个目录复制到 Codex 的 skills 目录中：
 
 ```bash
 cp -R precision-with-low-token-cost ~/.agents/skills/
 ```
 
-If your setup uses a different skills path, place the folder there instead.
+如果你的 Codex 环境使用的不是 `~/.agents/skills/`，请改为对应的 skills 路径。
 
-## Activation
+## 使用方式
 
-Reference the skill by name in your prompt:
+在提示词里直接引用这个 skill：
 
 ```text
 Use the precision-with-low-token-cost skill.
 ```
 
-You can also combine it with a domain skill when needed, for example:
+也可以和其他领域 skill 组合使用，例如：
 
 ```text
 Use precision-with-low-token-cost and bpi-frontend-expert.
 ```
 
-## Expected Behavior
+## 启用后的预期行为
 
-With this skill active, Codex should generally:
+启用后，Codex 通常会按下面的方式工作：
 
-1. inspect the smallest relevant surface first
-2. expand context only when blocked
-3. avoid duplicate summaries
-4. report outcome, verification, and remaining risk only
+1. 先检查最小相关范围，而不是大面积扫描
+2. 只有在卡住时才扩大读取范围
+3. 减少重复总结和重复解释
+4. 中间更新尽量短，只说新增信息
+5. 最终回答重点说明改了什么、如何验证、还剩什么风险
 
-## Limits
+## 设计原则
 
-This skill is not meant to trade away rigor for brevity.
+这个 skill 的核心原则是：
 
-It should not be used as a reason to:
+- 节省 token，不等于牺牲严谨性
+- 简洁优先，但不能靠猜测代替确认
+- 不确定就明确标出来，而不是装作确定
+- 少做无效叙述，把 token 留给真正有价值的推理和执行
 
-- skip validation
-- guess when uncertainty matters
-- hide risks
-- avoid asking necessary clarification questions
+## 说明
 
-## Usage Guide
-
-See [USAGE.md](./USAGE.md) for examples and prompt patterns.
+更具体的提示词写法和使用示例见 [USAGE.md](./USAGE.md)。
